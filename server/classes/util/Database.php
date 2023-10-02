@@ -54,7 +54,9 @@ class Database
         if (!static::$em) {
             $config = ORMSetup::createConfiguration(proxyDir: '/tmp/proxy');
 
-            $driver = new PHPDriver('/classes/entity/mapping/');
+            $namespaces = [FilesHelper::basePath('classes/entity/mapping/') => 'core\\entity'];
+            $driver = new \Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver($namespaces);
+
             $config->setMetadataDriverImpl($driver);
 
             static::$em = new EntityManager(static::connection(), $config);

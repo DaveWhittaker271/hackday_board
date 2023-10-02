@@ -24,7 +24,6 @@
 
  - Once installed you can run `npm run dev` to launch a hot-reload dev environment which should be on `https://hackdayboard.com:9000`
 
-
 ## Migrations
 [Doctrine Migrations](https://www.doctrine-project.org/projects/doctrine-migrations/en/3.6/index.html) are used to install database tables, initially there are no tables or migrations to run
 
@@ -41,6 +40,26 @@
 
 ## ORM
 [Doctrine ORM](https://www.doctrine-project.org/projects/doctrine-orm/en/2.16/reference/basic-mapping.html) is used for entity declarations, stored in the `/server/classes/entity` folder
+
+## Making database changes
+When adding new tables/columns etc. to the database this will also involve creating a migration and updating the entities to match:
+
+ - Make the changes necessary on the DB first
+
+
+ - Create or update the relevant entity class in `/server/classes/entity`
+
+
+ - Create or update mapping .xml file in the `/server/classes/entity/mapping` directory
+
+
+ - Run `php bin/doctrine orm:validate-schema` to ensure the XML mapping is correct
+
+
+ - If the validation fails then run `php bin/doctrine orm:schema-tool:update --dump-sql` which will list SQL changes necessary to bring the mapping into line with the actual DB table, useful for figuring out what is different between XML and DB
+
+
+ - Generate a migration with `php bin/migrations diff`
 
 ## Documentation pages
  - [Quasar Config](https://quasar.dev/quasar-cli-vite/quasar-config-file#property-sourcefiles)

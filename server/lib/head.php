@@ -7,11 +7,11 @@ use core\util\FilesHelper;
 
 $dotenv = Dotenv::createImmutable(FilesHelper::basePath('../conf'));
 $dotenv->load();
-/*
-$cache = \Symfony\Component\Cache\Adapter\PhpFilesAdapter(
-    'doctrine_metadata',
-    0,
-    '/tmp/'
-);
-$config = new \Doctrine\ORM\Configuration();
-$config->setMetadataCache($cache);*/
+
+if (!is_dir(FilesHelper::basePath('/tmp'))) {
+    mkdir(FilesHelper::basePath('/tmp'));
+}
+
+if (!is_dir(FilesHelper::srcPath('/graphql/query'))) {
+    mkdir(FilesHelper::srcPath('/graphql/query'));
+}

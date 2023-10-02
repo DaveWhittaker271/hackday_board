@@ -3,7 +3,6 @@
 namespace webapi\graphql\resolvers\mutation;
 
 use core\entity\User;
-use core\util\Authenticator;
 use core\util\Database;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Exception\ORMException;

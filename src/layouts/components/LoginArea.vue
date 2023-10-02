@@ -38,13 +38,13 @@ export default defineComponent({
     if (userDetails) {
       this.loggedIn(userDetails);
     } else {
-      window.google.accounts.id.initialize({
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        callback: this.handleCredentialResponse,
-        auto_select: true
-      });
-
       googleSdkLoaded(google => {
+        window.google.accounts.id.initialize({
+          client_id: process.env.GOOGLE_CLIENT_ID,
+          callback: this.handleCredentialResponse,
+          auto_select: true
+        });
+
         window.google.accounts.id.renderButton(this.$refs.googleLoginButton, {
           text: 'signin_with',
           size: 'large',
@@ -67,6 +67,8 @@ export default defineComponent({
     },
     handleCredentialResponse(credentailData) {
       this.verifyingLogin = true;
+
+      console.log('Received login response from Google API');
 
       this.$apollo.mutate({
         mutation: loginMutation,

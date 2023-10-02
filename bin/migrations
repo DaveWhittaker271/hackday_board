@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use core\util\Database;
+use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
+use Doctrine\Migrations\Configuration\Migration\JsonFile;
+use Doctrine\Migrations\DependencyFactory;
+use Doctrine\Migrations\Tools\Console\Command;
+use Dotenv\Dotenv;
+use Symfony\Component\Console\Application;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../conf/');
+$dotenv->load();
+
+$config = new JsonFile(__DIR__ . '/../conf/migrations.json');
+
+$dependencyFactory = DependencyFactory::fromEntityManager(
+    $config,
+    new ExistingEntityManager(Database::entityManager())
+);
+
+$cli = new Application('Doctrine Migrations');
+$cli->setCatchExceptions(true);
+
+$cli->addCommands([
+    new Command\DumpSchemaCommand($dependencyFactory),
+    new Command\ExecuteCommand($dependencyFactory),
+    new Command\GenerateCommand($dependencyFactory),
+    new Command\LatestCommand($dependencyFactory),
+    new Command\ListCommand($dependencyFactory),
+    new Command\MigrateCommand($dependencyFactory),
+    new Command\RollupCommand($dependencyFactory),
+    new Command\StatusCommand($dependencyFactory),
+    new Command\SyncMetadataCommand($dependencyFactory),
+    new Command\VersionCommand($dependencyFactory),
+    new Command\DiffCommand($dependencyFactory)
+]);
+
+$cli->run();

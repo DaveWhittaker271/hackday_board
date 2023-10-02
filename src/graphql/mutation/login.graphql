@@ -1,0 +1,7 @@
+mutation (
+  $jwt_token: String!
+) {
+  login(
+    jwt_token: $jwt_token
+  )
+}

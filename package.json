@@ -1,0 +1,44 @@
+{
+  "name": "hackday",
+  "version": "0.0.1",
+  "description": "A Quasar Project",
+  "productName": "Hackday",
+  "author": "Dave Whittaker <davew.271@gmail.com>",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue ./",
+    "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
+    "test": "echo \"No test specified\" && exit 0",
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "build:pwa": "quasar build -m pwa"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.6.9",
+    "@quasar/extras": "^1.0.0",
+    "@vue/apollo-option": "^4.0.0-alpha.20",
+    "dotenv": "^16.0.2",
+    "graphql": "^16.6.0",
+    "pinia": "^2.1.6",
+    "quasar": "^2.6.0",
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.0",
+    "vue3-google-login": "^2.0.23"
+  },
+  "devDependencies": {
+    "@intlify/vite-plugin-vue-i18n": "^3.3.1",
+    "@quasar/app-vite": "^1.0.0",
+    "@quasar/quasar-app-extension-apollo": "^2.0.0-beta.5",
+    "@rollup/plugin-graphql": "^1.1.0",
+    "autoprefixer": "^10.4.2",
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "prettier": "^2.5.1"
+  },
+  "engines": {
+    "node": "^18 || ^16 || ^14.19",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  }
+}

@@ -1,0 +1,55 @@
+// app global css in SCSS form
+
+@font-face {
+  font-family: CoolVetica;
+  src: local("CoolVetica"), url('./fonts/coolvetica/coolvetica rg.otf') format("truetype");
+}
+
+#q-app {
+  background: rgb(244,253,255);
+  background: linear-gradient(129deg, rgba(244,253,255,1) 0%, rgba(193,217,224,1) 100%);
+}
+
+.header-bar {
+  background: #292529bf;
+}
+
+.logo {
+  font-family: CoolVetica, serif;
+}
+
+.fluid-h1 {
+  font-size: calc(1rem + 3vw);
+}
+
+.fluid-h2 {
+  font-size: calc(1rem + 2vw);
+}
+
+.fluid-h3 {
+  font-size: calc(1rem + 1vw);
+}
+
+.fluid-h4 {
+  font-size: calc(0.75rem + 0.75vw);
+}
+
+.fluid-h5 {
+  font-size: calc(0.5rem + 0.5vw);
+}
+
+.fluid-t1 {
+  font-size: calc(0.1rem + 0.1vw);
+}
+
+.card-page {
+  max-width: 750px;
+}
+
+.card-page-md {
+  max-width: 1000px;
+}
+
+.card-page-lg {
+  max-width: 1250px;
+}

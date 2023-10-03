@@ -22,7 +22,7 @@
  - Open bash terminal into top level directory and run `npm install` and `composer install`
 
 
- - Once installed you can run `npm run dev` to launch a hot-reload dev environment which should be on `https://hackdayboard.com:9000`
+ - Once installed you can run `npm run dev` to launch a hot-reload dev environment which should be on `https://localhost:9000`
 
 ## Migrations
 [Doctrine Migrations](https://www.doctrine-project.org/projects/doctrine-migrations/en/3.6/index.html) are used to install database tables, initially there are no tables or migrations to run

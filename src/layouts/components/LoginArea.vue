@@ -70,7 +70,7 @@ export default defineComponent({
 
       return decodeCredential(authToken);
     },
-    handleCredentialResponse(credentailData) {
+    handleCredentialResponse(credentialData) {
       this.verifyingLogin = true;
 
       console.log('Received login response from Google API');
@@ -79,14 +79,14 @@ export default defineComponent({
         mutation: loginMutation,
         fetchPolicy: 'network-only',
         variables: {
-          'jwt_token': credentailData.credential
+          'jwt_token': credentialData.credential
         }
       }).then(result => {
         this.verifyingLogin = false;
 
         if (result.data.login) {
-          localStorage.setItem('authToken', credentailData.credential);
-          this.loggedIn(decodeCredential(credentailData.credential));
+          localStorage.setItem('authToken', credentialData.credential);
+          this.loggedIn(decodeCredential(credentialData.credential));
         }
       });
     },

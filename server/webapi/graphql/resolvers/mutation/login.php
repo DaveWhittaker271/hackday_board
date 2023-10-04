@@ -2,11 +2,11 @@
 
 namespace webapi\graphql\resolvers\mutation;
 
-use core\entity\User;
+use core\util\Auth;
 use core\util\Database;
+use core\util\Users;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Exception\ORMException;
-use Google_Client;
 use GraphQL\Type\Definition\ResolveInfo;
 use core\graphql\BaseResolver;
 
@@ -23,31 +23,22 @@ class login extends BaseResolver
      */
     public static function resolve($source, array $args, $context, ResolveInfo $info): string
     {
-        $token = $args['jwt_token'];
-
-        $client = new Google_Client(['client_id' => $_ENV['GOOGLE_CLIENT_ID']]);
-
-        $payload = $client->verifyIdToken($token);
-
-        // Invalid token
-        if (!$payload) {
-            return false;
-        }
+        $tokenData = Auth::getDataFromToken($args['jwt_token']);
 
         // Token valid, we should check if we have a matching user saved in the DB
         $em = Database::entityManager();
 
-        $user = $em->getRepository(User::class)->findOneBy(['google_uid' => $payload['sub']]);
+        $user = Users::getUserFromGoogleID($tokenData['sub']);
 
         // If no user is found we'll create a new one
         if (empty($user)) {
-            $user = new User();
-            $user->google_uid = $payload['sub'];
+            $user = new Users();
+            $user->google_uid = $tokenData['sub'];
         }
 
-        $user->email = $payload['email'];
-        $user->name = $payload['name'];
-        $user->picture_url = $payload['picture'];
+        $user->email = $tokenData['email'];
+        $user->name = $tokenData['name'];
+        $user->picture_url = $tokenData['picture'];
 
         $em->persist($user);
         $em->flush();

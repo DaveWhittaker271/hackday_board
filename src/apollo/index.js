@@ -9,7 +9,7 @@ export function getClientOptions() {
       operation.setContext(({headers = {}}) => ({
           headers: {
               ...headers,
-              'HTTP_AUTHORIZATION': 'Bearer ' + token,
+              'Authorization': 'Bearer ' + token,
           }
       }));
     }

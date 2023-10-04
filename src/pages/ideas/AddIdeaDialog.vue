@@ -62,9 +62,18 @@ export default {
           title: 'Error',
           message: 'Please make sure a title and description is provided!'
         });
+
+        return;
       }
 
-      this.$apollo.mutate({
+      const savingDialog = this.$q.dialog({
+        message: 'Saving idea...',
+        progress: true,
+        persistent: true,
+        ok: false
+      })
+
+      await this.$apollo.mutate({
         mutation: createIdeaMutation,
         fetchPolicy: 'network-only',
         variables: {
@@ -72,12 +81,20 @@ export default {
           'description': this.ideaDescription
         }
       }).then(result => {
-        console.log(result.data.create_idea);
-        if (result.data.create_idea) {
-          this.$emit('ok')
-          this.hide()
+        if (!result.data.create_idea) {
+          this.$q.dialog({
+            dark: true,
+            title: 'Error',
+            message: 'Error submitting idea, please try again...'
+          });
         }
+
+        savingDialog.update({'message': 'Uploading files...'});
+
+        this.$emit('ok')
+        this.hide();
       });
+
     },
     closeModal() {
       this.$emit('hide');

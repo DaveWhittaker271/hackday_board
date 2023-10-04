@@ -1,8 +1,8 @@
 <template>
   <q-layout view="hHh lpr fFf">
     <q-header class="header-bar">
-      <q-toolbar class="q-px-sm">
-        <q-toolbar-title>
+      <q-toolbar class="q-px-sm items-stretch">
+        <q-toolbar-title class="row items-center">
           <q-icon name="bi-lightbulb" class="q-pa-sm"/>
           <span class="logo vertical-middle">
             Hackday Ideas

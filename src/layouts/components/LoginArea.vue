@@ -1,5 +1,5 @@
 <template>
-  <div class="q-gutter-none column items-center q-mr-lg">
+  <div class="q-gutter-none row items-center q-mr-lg">
     <template v-if="!signedIn">
       <div v-show="!verifyingLogin" ref="googleLoginButton" />
 
@@ -7,24 +7,26 @@
         Signing in...
       </template>
     </template>
-    <div v-else class="row items-center">
-      <img :src="userStore.picture_url" height="30" class="q-mr-sm" /> {{ userStore.name }}
-    </div>
+
+    <LoggedInMenu v-else @logged-out="logout" />
   </div>
 </template>
-
-<script setup>
-</script>
 
 <script>
 import { defineComponent } from 'vue'
 import { googleSdkLoaded, decodeCredential } from 'vue3-google-login';
+
+import LoggedInMenu from 'layouts/components/LoggedInMenu.vue';
+
 import { getUserStore } from 'stores/user.js';
 
 import loginMutation from 'mutation/login.graphql';
 
 export default defineComponent({
   name: 'LoginArea',
+  components: {
+    LoggedInMenu,
+  },
   data() {
     return {
       signedIn: false,
@@ -39,23 +41,26 @@ export default defineComponent({
       this.loggedIn(userDetails);
     } else {
       googleSdkLoaded(google => {
-        window.google.accounts.id.initialize({
+        google.accounts.id.initialize({
           client_id: process.env.GOOGLE_CLIENT_ID,
           callback: this.handleCredentialResponse,
           auto_select: true
         });
 
-        window.google.accounts.id.renderButton(this.$refs.googleLoginButton, {
-          text: 'signin_with',
-          size: 'large',
-          width: '250',
-          theme: 'outline',
-          logo_alignment: 'left',
-        });
+        this.renderLoginButton();
       });
     }
   },
   methods: {
+    renderLoginButton() {
+      google.accounts.id.renderButton(this.$refs.googleLoginButton, {
+        text: 'signin_with',
+        size: 'large',
+        width: '250',
+        theme: 'outline',
+        logo_alignment: 'left',
+      });
+    },
     checkForAuthToken() {
       const authToken = localStorage.getItem('authToken');
 
@@ -90,8 +95,14 @@ export default defineComponent({
 
       this.userStore.$patch({
         'name': userDetails.name,
-        'picture_url': userDetails.picture
+        'picture_url': userDetails.picture,
+        'email': userDetails.email
       });
+    },
+    async logout() {
+      this.signedIn = false;
+      await this.$nextTick();
+      this.renderLoginButton()
     }
   }
 })

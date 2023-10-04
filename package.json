@@ -23,7 +23,8 @@
     "quasar": "^2.6.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0",
-    "vue3-google-login": "^2.0.23"
+    "vue3-google-login": "^2.0.23",
+    "vue3-styled-components": "^1.2.1"
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",

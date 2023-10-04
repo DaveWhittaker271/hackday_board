@@ -5,6 +5,7 @@ namespace webapi\graphql\resolvers\mutation;
 use core\entity\Idea;
 use core\graphql\BaseResolver;
 use core\util\Database;
+use core\util\Users;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\OptimisticLockException;
@@ -27,9 +28,11 @@ class create_idea extends BaseResolver
     public static function resolve($source, array $args, $context, ResolveInfo $info): bool
     {
         $em      = Database::entityManager();
-        $newIdea = new Idea();
 
-        $newIdea->user_id    = 1;
+        $user = Users::loggedIn();
+
+        $newIdea = new Idea();
+        $newIdea->user_id    = $user->id;
         $newIdea->project_id = 1;
         $newIdea->title      = $args['title'];
         $newIdea->description = $args['description'];

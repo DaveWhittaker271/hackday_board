@@ -94,6 +94,7 @@ export default defineComponent({
       this.signedIn = true;
 
       this.userStore.$patch({
+        'logged_in': true,
         'name': userDetails.name,
         'picture_url': userDetails.picture,
         'email': userDetails.email
@@ -101,7 +102,15 @@ export default defineComponent({
     },
     async logout() {
       this.signedIn = false;
+      this.userStore.$patch({
+        'logged_in': false,
+        'name': '',
+        'picture_url': '',
+        'email': ''
+      });
+
       await this.$nextTick();
+
       this.renderLoginButton()
     }
   }

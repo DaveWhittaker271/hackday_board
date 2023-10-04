@@ -7,10 +7,8 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\Mapping\Driver\PHPDriver;
 
 class Database
 {

@@ -1,7 +1,11 @@
 <template>
   <div>
     <div class="flex justify-end full-width">
-      <q-btn color="blue" icon="style" label="New idea" :disabled="!userStore.logged_in" @click="showAddIdeaDialog"/>
+      <q-btn color="blue" icon="style" label="New idea" :disabled="!userStore.logged_in" @click="showAddIdeaDialog">
+        <q-tooltip v-if="!userStore.logged_in">
+          Please login to submit an idea
+        </q-tooltip>
+      </q-btn>
     </div>
 
     <q-page class="flex flex-center full-width">

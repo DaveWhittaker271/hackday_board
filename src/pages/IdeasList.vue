@@ -1,14 +1,34 @@
 <template>
-  <div>
+  <div class="full-width">
     <div class="flex justify-end" style="width: 100%">
       <q-btn color="blue" icon="style" label="New idea" @click="modalOpen = true"/>
     </div>
     <q-page class="flex flex-center full-width">
-      <div >
-
-      </div>
       <div class="flex flex-center">
-        Ideas List Page
+        <q-spinner-cube
+          v-if="$apollo.loading"
+          color="blue"
+          size="5.5em"
+        />
+        <div v-else>
+          <q-card v-for="(idea, index) in this.totalIdeas" class="my-card q-my-md" flat bordered :key="`card-${index}`">
+            <q-card-section>
+              <div class="text-h3 dialog-header">{{ idea.name }}</div>
+            </q-card-section>
+            <q-card-section>
+              <img src="https://cdn.quasar.dev/img/mountains.jpg">
+              <q-card-actions align="right">
+                <div>
+                  <img :src="idea.user_image" height="30" class="q-mr-sm" /> {{ idea.user_name }}
+                </div>
+                <q-space />
+                <q-btn flat round color="red" icon="favorite" />
+                <q-btn flat round color="teal" icon="comment" />
+                <q-btn flat round color="primary" icon="share" />
+              </q-card-actions>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
 
       <q-dialog v-model="modalOpen" persistent transition-show="fade" transition-hide="fade">
@@ -50,6 +70,7 @@ import { getUserStore } from 'stores/user.js';
 import { useQuasar } from 'quasar';
 
 import createIdeaMutation from 'mutation/create_idea.graphql';
+import getIdeasQuery from 'query/get_ideas.graphql';
 
 export default defineComponent({
   name: 'IdeasList',
@@ -58,10 +79,35 @@ export default defineComponent({
       modalOpen: false,
       ideaTitle: '',
       ideaDescription: '',
-      userStore: getUserStore()
+      userStore: getUserStore(),
+      totalIdeas: []
     }
   },
+  apollo: {
+    totalIdeas: {
+      query: getIdeasQuery,
+      fetchPolicy: 'network-only',
+      variables() {
+        return {
+          project_id: 1
+        }
+      },
+      update: data => data.get_ideas.ideas
+    }
+  },
+  mounted() {
+    this.getIdeas();
+  },
   methods: {
+    getIdeas() {
+      this.$apollo.query({
+        query: getIdeasQuery,
+        fetchPolicy: 'network-only',
+        variables: {
+          'project_id': 1
+        }
+      })
+    },
     async createIdea() {
       const $q = useQuasar()
 
@@ -82,7 +128,6 @@ export default defineComponent({
           'description': this.ideaDescription
         }
       }).then(result => {
-        console.log(result.data.create_idea);
         if (result.data.create_idea) {
           this.modalOpen = false;
         }

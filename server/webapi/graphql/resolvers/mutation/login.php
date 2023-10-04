@@ -2,6 +2,7 @@
 
 namespace webapi\graphql\resolvers\mutation;
 
+use core\entity\User;
 use core\util\Auth;
 use core\util\Database;
 use core\util\Users;
@@ -32,7 +33,7 @@ class login extends BaseResolver
 
         // If no user is found we'll create a new one
         if (empty($user)) {
-            $user = new Users();
+            $user = new User();
             $user->google_uid = $tokenData['sub'];
         }
 

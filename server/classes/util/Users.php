@@ -46,12 +46,12 @@ class Users
 
     /**
      * @param string $googleUid
-     * @return User
+     * @return User|null
      * @throws Exception
      * @throws NotSupported
      * @throws ORMException
      */
-    public static function getUserFromGoogleID(string $googleUid): User
+    public static function getUserFromGoogleID(string $googleUid): ?User
     {
         $em = Database::entityManager();
 

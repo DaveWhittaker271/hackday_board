@@ -1,0 +1,7 @@
+extend type Mutation {
+  create_idea(
+    title: String!
+    description: String!
+    user_name: String!
+  ): Boolean!
+}

@@ -44,6 +44,6 @@ class login extends BaseResolver
         $em->persist($user);
         $em->flush();
 
-        return true;
+        return $user->id;
     }
 }

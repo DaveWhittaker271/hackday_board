@@ -35,10 +35,31 @@ export default defineComponent({
     }
   },
   mounted() {
-    const userDetails = this.checkForAuthToken();
+    const authToken = this.checkForAuthToken();
+
+    let userDetails = null;
+    try {
+      userDetails = decodeCredential(authToken);
+    } catch {
+      console.log('Invalid JWT token');
+    }
 
     if (userDetails) {
-      this.loggedIn(userDetails);
+      this.verifyingLogin = true;
+
+      this.$apollo.mutate({
+        mutation: loginMutation,
+        fetchPolicy: 'network-only',
+        variables: {
+          'jwt_token': authToken
+        }
+      }).then(result => {
+        this.verifyingLogin = false;
+
+        if (result.data.login) {
+          this.loggedIn(result.data.login, userDetails);
+        }
+      });
     } else {
       googleSdkLoaded(google => {
         google.accounts.id.initialize({
@@ -68,12 +89,7 @@ export default defineComponent({
         return false;
       }
 
-      try {
-        return decodeCredential(authToken);
-      } catch {
-        console.log('Invalid JWT token');
-        return false;
-      }
+      return authToken;
     },
     handleCredentialResponse(credentialData) {
       this.verifyingLogin = true;
@@ -91,15 +107,16 @@ export default defineComponent({
 
         if (result.data.login) {
           localStorage.setItem('authToken', credentialData.credential);
-          this.loggedIn(decodeCredential(credentialData.credential));
+          this.loggedIn(result.data.login, decodeCredential(credentialData.credential));
         }
       });
     },
-    loggedIn(userDetails) {
+    loggedIn(id, userDetails) {
       this.signedIn = true;
 
       this.userStore.$patch({
         'logged_in': true,
+        'id': id,
         'name': userDetails.name,
         'picture_url': userDetails.picture,
         'email': userDetails.email
@@ -109,6 +126,7 @@ export default defineComponent({
       this.signedIn = false;
       this.userStore.$patch({
         'logged_in': false,
+        'id': null,
         'name': '',
         'picture_url': '',
         'email': ''

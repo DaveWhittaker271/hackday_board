@@ -3,5 +3,5 @@ extend type Mutation {
     id: Int
     title: String!
     description: String!
-  ): Boolean!
+  ): Int!
 }

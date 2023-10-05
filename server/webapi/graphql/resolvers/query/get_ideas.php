@@ -2,13 +2,16 @@
 
 namespace webapi\graphql\resolvers\query;
 
+use core\entity\File;
 use core\entity\Idea;
 use core\entity\User;
 use core\graphql\BaseResolver;
 use core\util\Database;
+use core\util\FilesHelper;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
+use Google\Service\Drive\Resource\Files;
 use GraphQL\Type\Definition\ResolveInfo;
 
 class get_ideas extends BaseResolver
@@ -34,6 +37,16 @@ class get_ideas extends BaseResolver
 
             $idea->user_name =  $user->name;
             $idea->user_image = $user->picture_url;
+
+            $files = $em->getRepository(File::class)->findBy(['idea_id' => $idea->id]);
+
+            if (!empty($files)) {
+                $firstFile = current($files);
+                $idea->picture_url = FilesHelper::getUrlFromFile($firstFile);
+                $idea->files = array_map(function ($file) {
+                    return FilesHelper::getUrlFromFile($file);
+                }, $files);
+            }
         }
 
         return (object) ['ideas' => $ideas];

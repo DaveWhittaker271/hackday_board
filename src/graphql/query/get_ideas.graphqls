@@ -10,6 +10,8 @@ type idea {
   description: String
   user_name: String
   user_image: String
+  picture_url: String
+  files: [String!]
   timecreated: Int
 }
 

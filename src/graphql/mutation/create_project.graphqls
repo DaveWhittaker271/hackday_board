@@ -1,0 +1,7 @@
+extend type Mutation {
+  create_project(
+    id: Int
+    title: String!
+    description: String
+  ): Int!
+}

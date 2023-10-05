@@ -14,9 +14,12 @@ $currentUser = Users::loggedIn();
 $path = $currentUser->id  . '/';
 
 $ideaId = $_POST['idea_id'];
+$projectId = $_POST['project_id'];
 
 if (!empty($ideaId)) {
     $path .= 'ideas/' . $ideaId . '/';
+} else if (!empty($projectId)) {
+    $path .= 'projects/' . $projectId . '/';
 } else {
     http_response_code(400);
     die();
@@ -40,6 +43,10 @@ foreach ($_FILES as $file) {
 
         if (!empty($ideaId)) {
             $file->idea_id = $ideaId;
+        }
+
+        if (!empty($projectId)) {
+            $file->project_id = $projectId;
         }
 
         $em = Database::entityManager();

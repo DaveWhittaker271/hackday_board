@@ -19,6 +19,10 @@ query (
         text
         timecreated
       }
+      interested {
+        user_name
+        user_image
+      }
       user_name
       user_image
       picture_url

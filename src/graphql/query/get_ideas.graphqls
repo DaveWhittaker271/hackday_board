@@ -9,6 +9,7 @@ type idea {
   title: String!
   description: String
   comments: [Comment]
+  interested: [Interest]
   user_name: String
   user_image: String
   picture_url: String
@@ -24,6 +25,11 @@ type Comment {
   user_image: String
   text: String
   timecreated: String
+}
+
+type Interest {
+  user_name: String
+  user_image: String
 }
 
 extend type Query {

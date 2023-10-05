@@ -47,19 +47,7 @@ export default defineComponent({
     if (userDetails) {
       this.verifyingLogin = true;
 
-      this.$apollo.mutate({
-        mutation: loginMutation,
-        fetchPolicy: 'network-only',
-        variables: {
-          'jwt_token': authToken
-        }
-      }).then(result => {
-        this.verifyingLogin = false;
-
-        if (result.data.login) {
-          this.loggedIn(result.data.login, userDetails);
-        }
-      });
+      this.attemptLogin(authToken);
     } else {
       googleSdkLoaded(google => {
         google.accounts.id.initialize({
@@ -96,19 +84,30 @@ export default defineComponent({
 
       console.log('Received login response from Google API');
 
+      this.attemptLogin(credentialData.credential);
+    },
+    attemptLogin(token) {
       this.$apollo.mutate({
         mutation: loginMutation,
         fetchPolicy: 'network-only',
         variables: {
-          'jwt_token': credentialData.credential
+          'jwt_token': token
         }
       }).then(result => {
         this.verifyingLogin = false;
 
         if (result.data.login) {
-          localStorage.setItem('authToken', credentialData.credential);
-          this.loggedIn(result.data.login, decodeCredential(credentialData.credential));
+          localStorage.setItem('authToken', token);
+          this.loggedIn(result.data.login, decodeCredential(token));
         }
+      }).catch(async error => {
+        console.error('Unable to sign-in');
+        this.verifyingLogin = false;
+        localStorage.removeItem('authToken');
+
+        await this.$nextTick();
+
+        this.renderLoginButton()
       });
     },
     loggedIn(id, userDetails) {
@@ -124,6 +123,7 @@ export default defineComponent({
     },
     async logout() {
       this.signedIn = false;
+      localStorage.removeItem('authToken');
       this.userStore.$patch({
         'logged_in': false,
         'id': null,

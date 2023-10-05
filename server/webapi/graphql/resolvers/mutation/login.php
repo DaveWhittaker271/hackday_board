@@ -3,6 +3,7 @@
 namespace webapi\graphql\resolvers\mutation;
 
 use core\entity\User;
+use core\util\API;
 use core\util\Auth;
 use core\util\Database;
 use core\util\Users;
@@ -25,6 +26,10 @@ class login extends BaseResolver
     public static function resolve($source, array $args, $context, ResolveInfo $info): string
     {
         $tokenData = Auth::getDataFromToken($args['jwt_token']);
+
+        if (!$tokenData) {
+            API::invalidResponse('Invalid token');
+        }
 
         // Token valid, we should check if we have a matching user saved in the DB
         $em = Database::entityManager();

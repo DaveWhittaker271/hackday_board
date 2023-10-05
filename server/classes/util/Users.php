@@ -56,19 +56,5 @@ class Users
         $em = Database::entityManager();
 
         return $em->getRepository(User::class)->findOneBy(['google_uid' => $googleUid]);
-    }
-
-    /**
-     * @param string $name
-     * @return User|null
-     * @throws Exception
-     * @throws NotSupported
-     * @throws ORMException
-     */
-    public static function getUserFromName(string $name): ?User
-    {
-        $em = Database::entityManager();
-
-        return $em->getRepository(User::class)->findOneBy(['name' => $name]);
-    }
+    }   
 }

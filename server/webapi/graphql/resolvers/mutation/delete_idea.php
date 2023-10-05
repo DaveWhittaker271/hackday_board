@@ -5,6 +5,7 @@ namespace webapi\graphql\resolvers\mutation;
 use core\entity\Idea;
 use core\graphql\BaseResolver;
 use core\util\Database;
+use core\util\Users;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
@@ -31,7 +32,8 @@ class delete_idea extends BaseResolver
         }
 
         $em   = Database::entityManager();
-        $idea = $em->getRepository(Idea::class)->findOneBy(['id' => $args['id']]);
+        $user = Users::loggedIn();
+        $idea = $em->getRepository(Idea::class)->findOneBy(['id' => $args['id'], 'user_id'=> $user->id]);
 
         $em->remove($idea);
         $em->flush();

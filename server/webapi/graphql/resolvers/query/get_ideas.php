@@ -5,6 +5,7 @@ namespace webapi\graphql\resolvers\query;
 use core\entity\Comment;
 use core\entity\File;
 use core\entity\Idea;
+use core\entity\Interest;
 use core\entity\User;
 use core\graphql\BaseResolver;
 use core\util\Database;
@@ -48,6 +49,15 @@ class get_ideas extends BaseResolver
                 }, $files);
             }
             $idea->comments   = $em->getRepository(Comment::class)->findBy(['idea_id' => $idea->id]);
+
+            $idea->interested = $em->getRepository(Interest::class)->findBy(['idea_id' => $idea->id]);
+
+            foreach($idea->interested as $interest) {
+                $interestUser = $em->getRepository(User::class)->findOneBy(['id' => $interest->user_id]);
+
+                $interest->user_name = $interestUser->name;
+                $interest->user_image = $interestUser->picture_url;
+            }
 
             foreach ($idea->comments as $comment) {
                 $commentUser = $em->getRepository(User::class)->findOneBy(['id' => $comment->user_id]);

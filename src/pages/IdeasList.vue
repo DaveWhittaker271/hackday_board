@@ -11,16 +11,16 @@
     <q-page class="flex flex-center full-width">
       <div class="flex flex-block">
         <q-spinner-cube
-            v-if="$apollo.loading"
-            color="blue"
-            size="5.5em"
+          v-if="$apollo.loading"
+          color="blue"
+          size="5.5em"
         />
         <div v-else class="q-gutter full-width">
           <q-card
-              v-for="(idea, index) in totalIdeas"
-              class="my-card q-ma-md col-6"
-              bordered
-              :key="`card-${index}`"
+            v-for="(idea, index) in totalIdeas"
+            class="my-card q-ma-md col-6"
+            bordered
+            :key="`card-${index}`"
           >
             <q-card-section class="row">
               <div class="text-h5 idea_card_title">{{ idea.title }}</div>
@@ -51,8 +51,15 @@
       </div>
       <q-dialog v-model="detailsModal">
         <q-card style="width: 900px; max-width: 80vw;">
-          <q-card-section>
+          <q-card-section class="flex row">
             <div class="text-h4 q-font-bold">{{ selectedIdea.title }}</div>
+            <q-space />
+            <q-btn
+              color="primary"
+              label="Register Interest"
+              class="q-ma-sm"
+              @click="registerInterest"
+            />
           </q-card-section>
 
           <q-card-section v-if="selectedIdea.files && selectedIdea.files.length > 0">
@@ -76,6 +83,27 @@
 
           <q-card-section class="q-pt-none">
             <div class="text-body1" v-html="selectedIdea.description"/>
+          </q-card-section>
+
+          <q-card-section>
+            <q-expansion-item
+              expand-separator
+              icon="person"
+              label="Interested"
+              class="q-font-bold"
+            >
+              <q-card v-for="(interest, index) in selectedIdea.interested" bordered :key="index">
+                <q-card-section class="flex row items-center">
+                  <q-avatar size="35px">
+                    <img :src="interest.user_image">
+                  </q-avatar>
+                  <div class="text-subtitle1 q-ml-md items-center">
+                    <div>{{ interest.user_name }}</div>
+                  </div>
+                  <q-space />
+                </q-card-section>
+              </q-card>
+            </q-expansion-item>
           </q-card-section>
 
           <q-card-section>
@@ -124,9 +152,7 @@
                         {{ getDateString(comment.timecreated) }}
                       </div>
                     </div>
-                    <div class="text-body1 q-my-md">
-                      {{ comment.text }}
-                    </div>
+                    <div class="text-body1 q-my-md" v-html="comment.text"/>
                   </q-card-section>
                 </q-card>
               </q-card>
@@ -150,6 +176,7 @@ import AddIdeaDialog from "pages/ideas/AddIdeaDialog.vue";
 
 import deleteIdeaMutation from 'mutation/delete_idea.graphql';
 import addCommentMutation from 'mutation/add_comment.graphql';
+import registerInterestMutation from 'mutation/register_interest.graphql';
 import getIdeasQuery from 'query/get_ideas.graphql';
 
 export default defineComponent({
@@ -187,6 +214,19 @@ export default defineComponent({
       }).then(result => {
         if (result.data.delete_idea) {
           this.modalOpen = false;
+          this.$apollo.queries.totalIdeas.refetch();
+        }
+      });
+    },
+    registerInterest() {
+      this.$apollo.mutate({
+        mutation: registerInterestMutation,
+        fetchPolicy: 'network-only',
+        variables: {
+          'idea_id': this.selectedIdea.id,
+        }
+      }).then(result => {
+        if (result.data.register_interest) {
           this.$apollo.queries.totalIdeas.refetch();
         }
       });

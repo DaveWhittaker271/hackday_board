@@ -1,0 +1,7 @@
+mutation (
+  $idea_id: Int
+) {
+  register_interest(
+    idea_id: $idea_id
+  )
+}

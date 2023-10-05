@@ -87,7 +87,7 @@ module.exports = configure(function (ctx) {
     devServer: {
       open: false,
       https: false,
-      port:9002,
+      port: 9002,
       proxy: {
         '/webapi': {
           target: process.env.BACKEND_HOSTNAME,

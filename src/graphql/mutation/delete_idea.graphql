@@ -1,0 +1,7 @@
+mutation (
+  $id: Int!
+) {
+  delete_idea(
+    id: $id
+  )
+}

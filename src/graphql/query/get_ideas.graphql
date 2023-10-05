@@ -1,0 +1,18 @@
+query (
+  $project_id: Int!
+) {
+  get_ideas(
+    project_id: $project_id
+  ) {
+    ideas {
+      id
+      user_id
+      project_id
+      title
+      description
+      user_name
+      user_image
+      timecreated
+    }
+  }
+}

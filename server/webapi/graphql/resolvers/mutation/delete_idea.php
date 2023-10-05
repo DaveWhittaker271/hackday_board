@@ -8,11 +8,11 @@ use core\util\Database;
 use core\util\Users;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Exception\NotSupported;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use GraphQL\Type\Definition\ResolveInfo;
 
-class create_idea extends BaseResolver
+class delete_idea extends BaseResolver
 {
     /**
      * @param $source
@@ -27,22 +27,15 @@ class create_idea extends BaseResolver
      */
     public static function resolve($source, array $args, $context, ResolveInfo $info): bool
     {
-        $em   = Database::entityManager();
-        $user = Users::loggedIn();
-
-        if ($args['id']) {
-            $idea = $em->getRepository(Idea::class)->findOneBy(['id' => $args['id'], 'user_id' => $user->id]);
-        } else {
-            $idea = new Idea();
+        if ($args['id'] === null) {
+            return false;
         }
 
-        $idea->user_id    = $user->id;
-        $idea->project_id = 1;
-        $idea->title      = $args['title'];
-        $idea->description = $args['description'];
-        $idea->timecreated = time();
+        $em   = Database::entityManager();
+        $user = Users::loggedIn();
+        $idea = $em->getRepository(Idea::class)->findOneBy(['id' => $args['id'], 'user_id'=> $user->id]);
 
-        $em->persist($idea);
+        $em->remove($idea);
         $em->flush();
 
         return true;

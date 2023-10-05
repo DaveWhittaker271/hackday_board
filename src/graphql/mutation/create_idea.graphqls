@@ -1,7 +1,7 @@
 extend type Mutation {
   create_idea(
+    id: Int
     title: String!
     description: String!
-    user_name: String!
   ): Boolean!
 }

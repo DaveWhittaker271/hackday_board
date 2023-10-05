@@ -11,6 +11,7 @@ use core\util\FilesHelper;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
+use Google\Service\Drive\Resource\Files;
 use GraphQL\Type\Definition\ResolveInfo;
 
 class get_ideas extends BaseResolver
@@ -37,10 +38,14 @@ class get_ideas extends BaseResolver
             $idea->user_name =  $user->name;
             $idea->user_image = $user->picture_url;
 
-            $file = $em->getRepository(File::class)->findOneBy(['idea_id' => $idea->id]);
+            $files = $em->getRepository(File::class)->findBy(['idea_id' => $idea->id]);
 
-            if (!empty($file)) {
-                $idea->picture_url = FilesHelper::getUrlFromFile($file);
+            if (!empty($files)) {
+                $firstFile = current($files);
+                $idea->picture_url = FilesHelper::getUrlFromFile($firstFile);
+                $idea->files = array_map(function ($file) {
+                    return FilesHelper::getUrlFromFile($file);
+                }, $files);
             }
         }
 

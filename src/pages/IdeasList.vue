@@ -55,20 +55,21 @@
             <div class="text-h4 q-font-bold">{{ selectedIdea.title }}</div>
           </q-card-section>
 
-          <q-card-section>
+          <q-card-section v-if="selectedIdea.files && selectedIdea.files.length > 0">
             <div class="q-pa-md">
               <q-carousel
-                  animated
-                  v-model="slide"
-                  arrows
-                  navigation
-                  infinite
+                animated
+                v-model="slide"
+                arrows
+                navigation
+                infinite
               >
-                <!--  TODO: Pull through images from ideas into the carousel  -->
-                <q-carousel-slide :name="1" img-src="https://cdn.quasar.dev/img/mountains.jpg" />
-                <q-carousel-slide :name="2" img-src="https://cdn.quasar.dev/img/parallax1.jpg" />
-                <q-carousel-slide :name="3" img-src="https://cdn.quasar.dev/img/parallax2.jpg" />
-                <q-carousel-slide :name="4" img-src="https://cdn.quasar.dev/img/quasar.jpg" />
+                <q-carousel-slide
+                  v-for="(img, index) in selectedIdea.files"
+                  :key="index"
+                  :name="1"
+                  :img-src="img"
+                />
               </q-carousel>
             </div>
           </q-card-section>

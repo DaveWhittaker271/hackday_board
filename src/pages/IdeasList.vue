@@ -24,9 +24,13 @@
           >
             <q-card-section class="row">
               <div class="text-h5 idea_card_title">{{ idea.title }}</div>
-              <q-space />
-              <q-btn flat color="red" label="Delete" size="md" @click="deleteIdea(idea.id);"/>
-              <q-btn flat color="blue" label="Edit" size="md" @click="showAddIdeaDialog(idea);"/>
+              <template v-if="idea.user_id === userStore.id">
+                <q-space />
+
+                <q-btn flat color="red" label="Delete" size="md" @click="deleteIdea(idea.id);"/>
+
+                <q-btn flat color="blue" label="Edit" size="md" @click="showAddIdeaDialog(idea);"/>
+              </template>
             </q-card-section>
             <q-card-section>
               <img v-if="idea.picture_url" :src="idea.picture_url" class="full-width" style="max-width: 500px">
@@ -185,16 +189,22 @@ export default defineComponent({
       });
     },
     deleteIdea(id) {
-      this.$apollo.mutate({
-        mutation: deleteIdeaMutation,
-        fetchPolicy: 'network-only',
-        variables: {
-          'id': id,
-        }
-      }).then(result => {
-        if (result.data.delete_idea) {
-          this.$apollo.queries.totalIdeas.refetch();
-        }
+      this.$q.dialog({
+        dark: true,
+        title: 'Delete Idea?',
+        message: 'Are you sure want to delete this idea?'
+      }).onOk(() => {
+        this.$apollo.mutate({
+          mutation: deleteIdeaMutation,
+          fetchPolicy: 'network-only',
+          variables: {
+            'id': id,
+          }
+        }).then(result => {
+          if (result.data.delete_idea) {
+            this.$apollo.queries.totalIdeas.refetch();
+          }
+        });
       });
     },
     submitComment() {

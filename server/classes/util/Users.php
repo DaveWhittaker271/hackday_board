@@ -56,5 +56,5 @@ class Users
         $em = Database::entityManager();
 
         return $em->getRepository(User::class)->findOneBy(['google_uid' => $googleUid]);
-    }   
+    }
 }

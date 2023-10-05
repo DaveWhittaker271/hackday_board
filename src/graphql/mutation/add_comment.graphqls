@@ -1,0 +1,6 @@
+extend type Mutation {
+  add_comment(
+    idea_id: Int
+    text: String
+  ): Boolean!
+}

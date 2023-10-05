@@ -8,11 +8,22 @@ type idea {
   project_id: Int!
   title: String!
   description: String
+  comments: [Comment]
   user_name: String
   user_image: String
   picture_url: String
   files: [String!]
   timecreated: Int
+}
+
+type Comment {
+  id: Int
+  user_id: Int
+  idea_id: Int
+  name: String
+  user_image: String
+  text: String
+  timecreated: String
 }
 
 extend type Query {

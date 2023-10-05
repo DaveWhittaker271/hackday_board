@@ -1,0 +1,9 @@
+mutation (
+  $idea_id: Int
+  $text: String
+) {
+  add_comment(
+    idea_id: $idea_id
+    text: $text
+  )
+}

@@ -10,6 +10,15 @@ query (
       project_id
       title
       description
+      comments {
+        id
+        idea_id
+        user_id
+        name
+        user_image
+        text
+        timecreated
+      }
       user_name
       user_image
       picture_url

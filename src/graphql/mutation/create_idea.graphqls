@@ -1,5 +1,6 @@
 extend type Mutation {
   create_idea(
+    id: Int
     title: String!
     description: String!
   ): Int!

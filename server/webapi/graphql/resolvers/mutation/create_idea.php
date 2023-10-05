@@ -27,20 +27,24 @@ class create_idea extends BaseResolver
      */
     public static function resolve($source, array $args, $context, ResolveInfo $info): int
     {
-        $em      = Database::entityManager();
-
+        $em   = Database::entityManager();
         $user = Users::loggedIn();
 
-        $newIdea = new Idea();
-        $newIdea->user_id    = $user->id;
-        $newIdea->project_id = 1;
-        $newIdea->title      = $args['title'];
-        $newIdea->description = $args['description'];
-        $newIdea->timecreated = time();
+        if ($args['id']) {
+            $idea = $em->getRepository(Idea::class)->findOneBy(['id' => $args['id'], 'user_id' => $user->id]);
+        } else {
+            $idea = new Idea();
+        }
 
-        $em->persist($newIdea);
+        $idea->user_id    = $user->id;
+        $idea->project_id = 1;
+        $idea->title      = $args['title'];
+        $idea->description = $args['description'];
+        $idea->timecreated = time();
+
+        $em->persist($idea);
         $em->flush();
 
-        return $newIdea->id;
+        return $idea->id;
     }
 }

@@ -1,8 +1,10 @@
 mutation (
+  $id: Int
   $title: String!
   $description: String!
 ) {
   create_idea(
+    id: $id
     title: $title
     description: $description
   )

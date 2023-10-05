@@ -45,12 +45,24 @@ export default {
   components: {
     FileUploader,
   },
+  props: {
+    existingIdea: Object
+  },
   data() {
     return {
+      ideaId: null,
       ideaTitle: '',
       ideaDescription: '',
       savingDialog: null,
       savedIdeaId: null,
+    }
+  },
+  mounted() {
+    if (this.existingIdea !== undefined) {
+      console.log('existing')
+      this.ideaId = this.existingIdea.id;
+      this.ideaTitle = this.existingIdea.title;
+      this.ideaDescription = this.existingIdea.description;
     }
   },
   emits: ['ok', 'hide'],
@@ -88,6 +100,7 @@ export default {
         mutation: createIdeaMutation,
         fetchPolicy: 'network-only',
         variables: {
+          'id': this.ideaId,
           'title': this.ideaTitle,
           'description': this.ideaDescription
         }
@@ -109,6 +122,8 @@ export default {
           this.savingDialog.hide();
           this.$emit('ok')
           this.hide();
+
+          return;
         }
 
         this.$forceUpdate;

@@ -37,7 +37,7 @@ class create_idea extends BaseResolver
         }
 
         $idea->user_id    = $user->id;
-        $idea->project_id = 1;
+        $idea->project_id = $args['project_id'];
         $idea->title      = $args['title'];
         $idea->description = $args['description'];
         $idea->timecreated = time();

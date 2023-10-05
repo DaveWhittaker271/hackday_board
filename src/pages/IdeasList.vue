@@ -90,6 +90,7 @@
 <script>
 import { defineComponent } from 'vue';
 import { reactiveUserStore } from 'stores/user.js';
+import { useRoute } from "vue-router";
 
 import AddIdeaDialog from "pages/ideas/AddIdeaDialog.vue";
 
@@ -104,16 +105,22 @@ export default defineComponent({
       detailsModal: false,
       totalIdeas: [],
       selectedIdea: null,
-      slide: 1
+      slide: 1,
+      route: useRoute(),
     }
   },
   methods: {
     showAddIdeaDialog(idea) {
+      const projectId = Number(this.route.params.id);
+
       this.$q.dialog({
         component: AddIdeaDialog,
         componentProps: {
-          existingIdea: idea
+          existingIdea: idea,
+          projectId: projectId
         }
+      }).onOk(() => {
+        this.$apollo.queries.totalIdeas.refetch();
       });
     },
     deleteIdea(id) {
@@ -125,7 +132,6 @@ export default defineComponent({
         }
       }).then(result => {
         if (result.data.delete_idea) {
-          this.modalOpen = false;
           this.$apollo.queries.totalIdeas.refetch();
         }
       });
@@ -137,7 +143,7 @@ export default defineComponent({
       fetchPolicy: 'network-only',
       variables() {
         return {
-          project_id: 1
+          project_id: Number(this.route.params.id)
         }
       },
       update: data => data.get_ideas.ideas

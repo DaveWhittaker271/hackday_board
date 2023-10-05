@@ -15,7 +15,7 @@
       <q-card-actions class="justify-center">
 
         <router-link
-          :to="`/project/${projectId}/ideas}`"
+          :to="`/project/${projectId}/ideas`"
           custom
           v-slot="{ navigate }"
         >
@@ -30,6 +30,7 @@
 export default {
   name: 'ProjectCard',
   props: {
+    projectId: Number,
     title: String,
     submittedBy: String,
     description: String,

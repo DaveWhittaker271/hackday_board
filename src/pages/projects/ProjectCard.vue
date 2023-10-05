@@ -13,7 +13,14 @@
       </q-card-section>
 
       <q-card-actions class="justify-center">
-        <q-btn flat>View</q-btn>
+
+        <router-link
+          :to="`/project/${projectId}/ideas`"
+          custom
+          v-slot="{ navigate }"
+        >
+          <q-btn flat @click="navigate">View</q-btn>
+        </router-link>
       </q-card-actions>
     </q-card>
   </div>
@@ -23,6 +30,7 @@
 export default {
   name: 'ProjectCard',
   props: {
+    projectId: Number,
     title: String,
     submittedBy: String,
     description: String,

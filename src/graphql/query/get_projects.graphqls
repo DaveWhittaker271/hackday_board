@@ -1,0 +1,16 @@
+type get_projects_response {
+    projects: [project]
+}
+
+type project {
+    id: Int!
+    title: String!
+    description: String
+    submitted_by_name: String!
+}
+
+extend type Query {
+    get_projects(
+        id: Int
+    ): get_projects_response
+}

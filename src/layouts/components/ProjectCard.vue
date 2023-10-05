@@ -28,11 +28,6 @@ export default {
     description: String,
     imageUrl: String,
   },
-  data () {
-    return {
-
-    }
-  }
 }
 </script>
 

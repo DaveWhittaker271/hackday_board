@@ -68,7 +68,12 @@ export default defineComponent({
         return false;
       }
 
-      return decodeCredential(authToken);
+      try {
+        return decodeCredential(authToken);
+      } catch {
+        console.log('Invalid JWT token');
+        return false;
+      }
     },
     handleCredentialResponse(credentialData) {
       this.verifyingLogin = true;

@@ -19,7 +19,7 @@ class GraphQLResolver
     public static function resolve(): void
     {
         header('Access-Control-Allow-Origin: ' . $_ENV['FRONTEND_HOSTNAME']);
-        header('Access-Control-Allow-Headers: Content-Type, GraphQL-Resolver, HTTP_AUTHORIZATION');
+        header('Access-Control-Allow-Headers: Content-Type, GraphQL-Resolver, Authorization');
         header('Access-Control-Allow-Methods: POST, OPTIONS');
 
         $schema   = GraphQLSchema::getSchema();

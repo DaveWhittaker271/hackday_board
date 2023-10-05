@@ -16,7 +16,9 @@ class FilesHelper
             $path = substr($path, 1);
         }
 
-        return $_SERVER['DOCUMENT_ROOT'] . '/' . $path;
+        $baseDir = $_SERVER['DOCUMENT_ROOT'] ?: getcwd() . '/server';
+
+        return $baseDir . '/' . $path;
     }
 
     /**

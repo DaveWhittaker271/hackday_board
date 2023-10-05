@@ -1,0 +1,14 @@
+query (
+    $id: Int
+) {
+    get_projects(
+        id: $id
+    ) {
+        projects {
+            id
+            title
+            description
+            submitted_by_name
+        }
+    }
+}

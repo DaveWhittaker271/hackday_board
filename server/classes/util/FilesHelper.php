@@ -2,6 +2,8 @@
 
 namespace core\util;
 
+use core\entity\File;
+
 class FilesHelper
 {
     /**
@@ -60,5 +62,14 @@ class FilesHelper
         }
 
         return $results;
+    }
+
+    /**
+     * @param File $file
+     * @return string
+     */
+    public static function getUrlFromFile(File $file)
+    {
+        return $_ENV['BACKEND_HOSTNAME'] . '/file.php?id=' . $file->id;
     }
 }

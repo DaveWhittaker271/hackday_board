@@ -1,23 +1,15 @@
 <template>
     <q-page class="flex">
-      <ProjectCard
-          title="First Project"
-          submitted-by="John Smith"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-          image-url="https://cdn.quasar.dev/img/mountains.jpg"
-      />
-      <ProjectCard
-          title="Second Project"
-          submitted-by="George Clarke"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-          image-url="https://cdn.quasar.dev/img/mountains.jpg"
-      />
-      <ProjectCard
-          title="Third Project"
-          submitted-by="Jenny Jarvis"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-          image-url="https://cdn.quasar.dev/img/mountains.jpg"
-      />
+      <template
+          v-for="(project, index) in projects"
+          :key="index"
+      >
+        <ProjectCard
+          :title="project.title"
+          :description="project.description"
+          :submitted-by="project.submitted_by_name"
+        />
+      </template>
     </q-page>
 </template>
 
@@ -25,10 +17,22 @@
 import { defineComponent } from 'vue';
 import ProjectCard from "layouts/components/ProjectCard.vue";
 
+import getProjectsQuery from "query/get_projects.graphql";
+
 export default defineComponent({
   name: 'ProjectList',
   components: {
-    ProjectCard,
-  }
+    ProjectCard
+  },
+  props: {
+    projects: Object,
+  },
+  apollo: {
+    projects: {
+      query: getProjectsQuery,
+      fetchPolicy: 'network-only',
+      update: data => data.get_projects.projects
+    }
+  },
 })
 </script>

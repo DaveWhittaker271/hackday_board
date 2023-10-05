@@ -10,7 +10,8 @@
         "symfony/cache": "^6.0",
         "guzzlehttp/guzzle": "^7.5",
         "ext-zlib": "*",
-        "google/apiclient": "^2.15"
+        "google/apiclient": "^2.15",
+        "ext-fileinfo": "*"
     },
     "autoload": {
         "psr-4": {

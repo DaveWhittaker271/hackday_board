@@ -19,13 +19,13 @@ class create_idea extends BaseResolver
      * @param array $args
      * @param $context
      * @param ResolveInfo $info
-     * @return bool
+     * @return int
      * @throws Exception
      * @throws NotSupported
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public static function resolve($source, array $args, $context, ResolveInfo $info): bool
+    public static function resolve($source, array $args, $context, ResolveInfo $info): int
     {
         $em   = Database::entityManager();
         $user = Users::loggedIn();
@@ -45,6 +45,6 @@ class create_idea extends BaseResolver
         $em->persist($idea);
         $em->flush();
 
-        return true;
+        return $idea->id;
     }
 }

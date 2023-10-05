@@ -28,10 +28,10 @@ class create_idea extends BaseResolver
     public static function resolve($source, array $args, $context, ResolveInfo $info): bool
     {
         $em   = Database::entityManager();
-        $user = Users::getUserFromName($args['user_name']);
+        $user = Users::loggedIn();
 
         if ($args['id']) {
-            $idea = $em->getRepository(Idea::class)->findOneBy(['id' => $args['id']]);
+            $idea = $em->getRepository(Idea::class)->findOneBy(['id' => $args['id'], 'user_id' => $user->id]);
         } else {
             $idea = new Idea();
         }

@@ -2,6 +2,8 @@
 
 namespace core\util;
 
+use core\entity\File;
+
 class FilesHelper
 {
     /**

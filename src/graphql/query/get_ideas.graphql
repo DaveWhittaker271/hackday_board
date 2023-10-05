@@ -12,6 +12,7 @@ query (
       description
       user_name
       user_image
+      picture_url
       timecreated
     }
   }

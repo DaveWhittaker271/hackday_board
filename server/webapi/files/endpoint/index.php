@@ -24,8 +24,8 @@ if (!empty($ideaId)) {
 
 $filesDir = FilesHelper::basePath('../files/');
 
-if (!is_dir($filesDir)) {
-    mkdir($filesDir, recursive: true);
+if (!is_dir($filesDir . $path)) {
+    mkdir($filesDir . $path, recursive: true);
 }
 
 foreach ($_FILES as $file) {

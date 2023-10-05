@@ -29,7 +29,7 @@
               <q-btn flat color="blue" label="Edit" size="md" @click="showAddIdeaDialog(idea);"/>
             </q-card-section>
             <q-card-section>
-              <img src="https://cdn.quasar.dev/img/mountains.jpg" class="full-width">
+              <img v-if="idea.picture_url" :src="idea.picture_url" class="full-width" style="max-width: 500px">
               <q-card-actions align="right">
                 <div class="row items-center">
                   <q-avatar size="35px">

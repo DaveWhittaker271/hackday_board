@@ -70,6 +70,6 @@ class FilesHelper
      */
     public static function getUrlFromFile(File $file)
     {
-        return 'file.php?id=' . $file->id;
+        return $_ENV['BACKEND_HOSTNAME'] . '/file.php?id=' . $file->id;
     }
 }

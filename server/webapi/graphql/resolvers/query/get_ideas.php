@@ -2,10 +2,12 @@
 
 namespace webapi\graphql\resolvers\query;
 
+use core\entity\File;
 use core\entity\Idea;
 use core\entity\User;
 use core\graphql\BaseResolver;
 use core\util\Database;
+use core\util\FilesHelper;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
@@ -34,6 +36,12 @@ class get_ideas extends BaseResolver
 
             $idea->user_name =  $user->name;
             $idea->user_image = $user->picture_url;
+
+            $file = $em->getRepository(File::class)->findOneBy(['idea_id' => $idea->id]);
+
+            if (!empty($file)) {
+                $idea->picture_url = FilesHelper::getUrlFromFile($file);
+            }
         }
 
         return (object) ['ideas' => $ideas];

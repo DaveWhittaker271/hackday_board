@@ -2,6 +2,7 @@
 
 namespace webapi\graphql\resolvers\query;
 
+use core\entity\Comment;
 use core\entity\Idea;
 use core\entity\User;
 use core\graphql\BaseResolver;
@@ -25,15 +26,22 @@ class get_ideas extends BaseResolver
      */
     public static function resolve($source, array $args, $context, ResolveInfo $info)
     {
-        $em = Database::entityManager();
-
+        $em    = Database::entityManager();
         $ideas = $em->getRepository(Idea::class)->findBy(['project_id' => $args['project_id']]);
 
         foreach ($ideas as &$idea) {
             $user = $em->getRepository(User::class)->findOneBy(['id' => $idea->user_id]);
 
-            $idea->user_name =  $user->name;
+            $idea->user_name  =  $user->name;
             $idea->user_image = $user->picture_url;
+            $idea->comments   = $em->getRepository(Comment::class)->findBy(['idea_id' => $idea->id]);
+
+            foreach ($idea->comments as $comment) {
+                $commentUser = $em->getRepository(User::class)->findOneBy(['id' => $comment->user_id]);
+
+                $comment->name       = $commentUser->name;
+                $comment->user_image = $commentUser->picture_url;
+            }
         }
 
         return (object) ['ideas' => $ideas];

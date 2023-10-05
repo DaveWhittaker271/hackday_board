@@ -100,7 +100,62 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="text-body1">{{ selectedIdea.description }}</div>
+            <div class="text-body1" v-html="selectedIdea.description"/>
+          </q-card-section>
+
+          <q-card-section>
+            <q-expansion-item
+                expand-separator
+                icon="message"
+                label="Comments"
+                class="q-font-bold"
+            >
+              <q-card bordered>
+                <div>
+                  <q-card-section v-if="showTextArea">
+                    <div class="text-h6 q-mb-sm">Add a comment</div>
+                    <q-editor v-model="newCommentText" min-height="5rem" placeholder="Comment text" style="color: #696969 !important"/>
+                  </q-card-section>
+
+                  <q-btn
+                    color="primary"
+                    :label="!showTextArea ? 'Add Comment' : 'Close'"
+                    class="q-ma-sm"
+                    @click="showTextArea = !showTextArea"
+                  />
+
+                  <q-btn
+                    v-if="showTextArea"
+                    color="primary"
+                    label="Submit"
+                    class="q-ma-sm"
+                    @click="submitComment"
+                  />
+                  <q-space />
+                </div>
+                <q-card v-for="comment in selectedIdea.comments" :key="comment.id" bordered>
+                  <q-card-section class="flex column">
+                    <div class="row items-center">
+                      <q-avatar size="35px">
+                        <img :src="comment.user_image">
+                      </q-avatar>
+
+                      <div class="text-subtitle1 q-ml-md items-center">
+                        <div>{{ comment.name }}</div>
+                      </div>
+                      <q-space />
+
+                      <div class="text-weight-light">
+                        {{ getDateString(comment.timecreated) }}
+                      </div>
+                    </div>
+                    <div class="text-body1 q-my-md">
+                      {{ comment.text }}
+                    </div>
+                  </q-card-section>
+                </q-card>
+              </q-card>
+            </q-expansion-item>
           </q-card-section>
 
           <q-card-actions align="right" class="bg-white text-teal">
@@ -118,6 +173,7 @@ import { getUserStore } from 'stores/user.js';
 
 import createIdeaMutation from 'mutation/create_idea.graphql';
 import deleteIdeaMutation from 'mutation/delete_idea.graphql';
+import addCommentMutation from 'mutation/add_comment.graphql';
 import getIdeasQuery from 'query/get_ideas.graphql';
 
 export default defineComponent({
@@ -126,7 +182,9 @@ export default defineComponent({
     return {
       modalOpen: false,
       detailsModal: false,
+      showTextArea: false,
       ideaId: null,
+      newCommentText: '',
       ideaTitle: '',
       ideaDescription: '',
       userStore: getUserStore(),
@@ -196,6 +254,32 @@ export default defineComponent({
           this.$apollo.queries.totalIdeas.refetch();
         }
       });
+    },
+    submitComment() {
+      if (this.newCommentText === '') {
+        return;
+      }
+
+      this.$apollo.mutate({
+        mutation: addCommentMutation,
+        fetchPolicy: 'network-only',
+        variables: {
+          'idea_id': this.selectedIdea.id,
+          'text': this.newCommentText
+        }
+      }).then(result => {
+        if (result.data.add_comment) {
+          this.detailsModal = false;
+          this.newCommentText = '';
+          this.selectedIdea = null;
+          this.$apollo.queries.totalIdeas.refetch();
+        }
+      });
+    },
+    getDateString(timestamp) {
+      let newDate = new Date();
+      newDate.setTime(timestamp * 1000);
+      return newDate.toUTCString();
     }
   }
 });

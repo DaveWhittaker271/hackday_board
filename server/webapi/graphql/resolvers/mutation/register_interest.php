@@ -31,6 +31,10 @@ class register_interest extends BaseResolver
         $user = Users::loggedIn();
         $em   = Database::entityManager();
 
+        if (!$user) {
+            return false;
+        }
+
         $interest = $em->getRepository(Interest::class)->findOneBy(['idea_id' => $args['idea_id'], 'user_id'=> $user->id]);
 
         if (!$interest) {

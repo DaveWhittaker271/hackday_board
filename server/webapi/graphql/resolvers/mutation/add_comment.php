@@ -31,6 +31,10 @@ class add_comment extends BaseResolver
         $em      = Database::entityManager();
         $user    = Users::loggedIn();
 
+        if (!$user) {
+            return false;
+        }
+
         $comment->user_id     = $user->id;
         $comment->idea_id     = $args['idea_id'];
         $comment->text        = $args['text'];

@@ -30,6 +30,10 @@ class create_idea extends BaseResolver
         $em   = Database::entityManager();
         $user = Users::loggedIn();
 
+        if (!$user) {
+            return -1;
+        }
+
         if ($args['id']) {
             $idea = $em->getRepository(Idea::class)->findOneBy(['id' => $args['id'], 'user_id' => $user->id]);
         } else {

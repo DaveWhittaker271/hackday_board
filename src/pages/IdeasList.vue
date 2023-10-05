@@ -4,27 +4,41 @@
       <q-btn color="blue" icon="style" label="New idea" @click="modalOpen = true"/>
     </div>
     <q-page class="flex flex-center full-width">
-      <div class="flex flex-center">
+      <div class="flex flex-block">
         <q-spinner-cube
           v-if="$apollo.loading"
           color="blue"
           size="5.5em"
         />
-        <div v-else>
-          <q-card v-for="(idea, index) in this.totalIdeas" class="my-card q-my-md" flat bordered :key="`card-${index}`">
-            <q-card-section>
-              <div class="text-h3 dialog-header">{{ idea.name }}</div>
+        <div v-else class="q-gutter full-width">
+          <q-card
+              v-for="(idea, index) in totalIdeas"
+              class="my-card q-ma-md col-6"
+              bordered
+              :key="`card-${index}`"
+          >
+            <q-card-section class="row">
+              <div class="text-h5 idea_card_title">{{ idea.title }}</div>
+              <q-space />
+              <q-btn flat color="red" label="Delete" size="md" @click="deleteIdea(idea.id);"/>
+              <q-btn flat color="blue" label="Edit" size="md" @click="editModal(idea);"/>
             </q-card-section>
             <q-card-section>
-              <img src="https://cdn.quasar.dev/img/mountains.jpg">
+              <img src="https://cdn.quasar.dev/img/mountains.jpg" class="full-width">
               <q-card-actions align="right">
-                <div>
-                  <img :src="idea.user_image" height="30" class="q-mr-sm" /> {{ idea.user_name }}
+                <div class="row items-center">
+                  <q-avatar size="35px">
+                    <img :src="idea.user_image">
+                  </q-avatar>
+
+                  <div class="text-subtitle1 q-ml-md items-center">
+                    <div>{{ idea.user_name }}</div>
+                  </div>
                 </div>
+                <q-btn color="blue" label="View Idea" size="md" class="q-ml-md" @click="detailsModal = true; selectedIdea = idea"/>
                 <q-space />
                 <q-btn flat round color="red" icon="favorite" />
                 <q-btn flat round color="teal" icon="comment" />
-                <q-btn flat round color="primary" icon="share" />
               </q-card-actions>
             </q-card-section>
           </q-card>
@@ -37,7 +51,7 @@
             <div class="text-h3 dialog-header">New Idea</div>
             <q-space />
 
-            <q-btn dense flat icon="close" v-close-popup @click="modalOpen = false">
+            <q-btn dense flat icon="close" v-close-popup @click="dismissModal">
               <q-tooltip class="bg-white text-primary">Close</q-tooltip>
             </q-btn>
           </q-bar>
@@ -55,9 +69,43 @@
           <!--  TODO Add image upload functionality -->
 
           <q-card-section class="flex justify-center full-width">
-            <q-btn flat style="color: white" label="Cancel" :outline="true" class="q-mx-sm" @click="modalOpen = false"/>
+            <q-btn flat style="color: white" label="Cancel" :outline="true" class="q-mx-sm" @click="dismissModal"/>
             <q-btn color="primary" label="Submit" class="q-mx-sm" @click="createIdea"/>
           </q-card-section>
+        </q-card>
+      </q-dialog>
+
+      <q-dialog v-model="detailsModal">
+        <q-card style="width: 900px; max-width: 80vw;">
+          <q-card-section>
+            <div class="text-h4 q-font-bold">{{ selectedIdea.title }}</div>
+          </q-card-section>
+
+          <q-card-section>
+            <div class="q-pa-md">
+              <q-carousel
+                  animated
+                  v-model="slide"
+                  arrows
+                  navigation
+                  infinite
+              >
+                <!--  TODO: Pull through images from ideas into the carousel  -->
+                <q-carousel-slide :name="1" img-src="https://cdn.quasar.dev/img/mountains.jpg" />
+                <q-carousel-slide :name="2" img-src="https://cdn.quasar.dev/img/parallax1.jpg" />
+                <q-carousel-slide :name="3" img-src="https://cdn.quasar.dev/img/parallax2.jpg" />
+                <q-carousel-slide :name="4" img-src="https://cdn.quasar.dev/img/quasar.jpg" />
+              </q-carousel>
+            </div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <div class="text-body1">{{ selectedIdea.description }}</div>
+          </q-card-section>
+
+          <q-card-actions align="right" class="bg-white text-teal">
+            <q-btn flat label="Close" v-close-popup />
+          </q-card-actions>
         </q-card>
       </q-dialog>
     </q-page>
@@ -67,9 +115,9 @@
 <script>
 import { defineComponent } from 'vue';
 import { getUserStore } from 'stores/user.js';
-import { useQuasar } from 'quasar';
 
 import createIdeaMutation from 'mutation/create_idea.graphql';
+import deleteIdeaMutation from 'mutation/delete_idea.graphql';
 import getIdeasQuery from 'query/get_ideas.graphql';
 
 export default defineComponent({
@@ -77,10 +125,14 @@ export default defineComponent({
   data() {
     return {
       modalOpen: false,
+      detailsModal: false,
+      ideaId: null,
       ideaTitle: '',
       ideaDescription: '',
       userStore: getUserStore(),
-      totalIdeas: []
+      totalIdeas: [],
+      selectedIdea: null,
+      slide: 1
     }
   },
   apollo: {
@@ -95,34 +147,17 @@ export default defineComponent({
       update: data => data.get_ideas.ideas
     }
   },
-  mounted() {
-    this.getIdeas();
-  },
   methods: {
-    getIdeas() {
-      this.$apollo.query({
-        query: getIdeasQuery,
-        fetchPolicy: 'network-only',
-        variables: {
-          'project_id': 1
-        }
-      })
-    },
     async createIdea() {
-      const $q = useQuasar()
-
       if(this.ideaTitle.length === 0 || this.ideaDescription.length === 0) {
-        $q.dialog({
-          dark: true,
-          title: 'Error',
-          message: 'Please make sure a title and description is provided!'
-        });
+        return;
       }
 
       this.$apollo.mutate({
         mutation: createIdeaMutation,
         fetchPolicy: 'network-only',
         variables: {
+          'id': this.ideaId,
           'user_name': this.userStore.name,
           'title': this.ideaTitle,
           'description': this.ideaDescription
@@ -130,6 +165,35 @@ export default defineComponent({
       }).then(result => {
         if (result.data.create_idea) {
           this.modalOpen = false;
+          this.$apollo.queries.totalIdeas.refetch();
+        }
+      });
+    },
+    dismissModal() {
+      this.ideaId = null;
+      this.ideaTitle = '';
+      this.ideaDescription = '';
+
+      this.modalOpen = false;
+    },
+    editModal(idea) {
+      this.ideaId = idea.id;
+      this.ideaTitle = idea.title;
+      this.ideaDescription = idea.description;
+
+      this.modalOpen = true;
+    },
+    deleteIdea(id) {
+      this.$apollo.mutate({
+        mutation: deleteIdeaMutation,
+        fetchPolicy: 'network-only',
+        variables: {
+          'id': id,
+        }
+      }).then(result => {
+        if (result.data.delete_idea) {
+          this.modalOpen = false;
+          this.$apollo.queries.totalIdeas.refetch();
         }
       });
     }

@@ -1,9 +1,11 @@
 mutation (
+  $id: Int!
   $title: String!
   $description: String!
   $user_name: String!
 ) {
   create_idea(
+    id: $id
     title: $title
     description: $description
     user_name: $user_name

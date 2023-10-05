@@ -46,7 +46,8 @@ export default {
     FileUploader,
   },
   props: {
-    existingIdea: Object
+    existingIdea: Object,
+    projectId: Number,
   },
   data() {
     return {
@@ -101,6 +102,7 @@ export default {
         fetchPolicy: 'network-only',
         variables: {
           'id': this.ideaId,
+          'project_id': this.projectId,
           'title': this.ideaTitle,
           'description': this.ideaDescription
         }

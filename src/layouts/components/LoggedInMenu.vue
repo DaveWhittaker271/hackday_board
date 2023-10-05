@@ -44,11 +44,9 @@ export default defineComponent({
   },
   methods: {
     logout() {
-      window.google.accounts.id.revoke(this.userStore.email, () => {
-        localStorage.removeItem('authToken');
-        this.$emit('logged-out');
-        console.log('Logged Out');
-      });
+      localStorage.removeItem('authToken');
+      this.$emit('logged-out');
+      console.log('Logged Out');
     }
   }
 })

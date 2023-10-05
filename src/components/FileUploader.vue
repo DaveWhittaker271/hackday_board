@@ -3,9 +3,13 @@
     url="/webapi/files/endpoint/"
     :accept="accepts"
     :headers="getHeaders()"
+    :form-fields="extraFields"
     :multiple="multiple"
     class="full-width"
     style="height: 200px"
+    ref="uploader"
+    @added="fileAdded"
+    @removed="fileRemoved"
     @uploaded="uploaded"
     @failed="failed"
   />
@@ -18,7 +22,13 @@ export default defineComponent({
   name: 'FileUploader',
   props: {
     accepts: String,
-    multiple: Boolean
+    multiple: Boolean,
+    extraFields: Array,
+  },
+  data() {
+    return {
+      fileCount: 0,
+    }
   },
   methods: {
     getHeaders() {
@@ -35,8 +45,20 @@ export default defineComponent({
       this.$emit('uploaded');
     },
     failed() {
-      this.$emit(upload-failed);
-    }
+      this.$emit('upload-failed');
+    },
+    fileAdded() {
+      this.fileCount++;
+    },
+    fileRemoved() {
+      this.fileCount--;
+    },
+    hasFiles() {
+      return this.fileCount > 0;
+    },
+    upload() {
+      this.$refs.uploader.upload();
+    },
   }
 })
 </script>

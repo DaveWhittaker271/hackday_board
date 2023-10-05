@@ -21,7 +21,11 @@
       </q-card-section>
       <q-card-section>
         <div class="text-h6 q-mb-sm">Attach Files</div>
-        <FileUploader />
+        <FileUploader
+          ref="uploader"
+          :extra-fields="uploaderExtraFields()"
+          @uploaded="uploadFinished"
+        />
       </q-card-section>
 
       <q-card-section class="flex justify-center full-width">
@@ -45,6 +49,8 @@ export default {
     return {
       ideaTitle: '',
       ideaDescription: '',
+      savingDialog: null,
+      savedIdeaId: null,
     }
   },
   emits: ['ok', 'hide'],
@@ -54,6 +60,11 @@ export default {
     },
     hide () {
       this.$refs.dialog.hide();
+    },
+    uploaderExtraFields() {
+      return [
+        {name: 'idea_id', value: this.savedIdeaId}
+      ];
     },
     async createIdea() {
       if(this.ideaTitle.length === 0 || this.ideaDescription.length === 0) {
@@ -66,7 +77,7 @@ export default {
         return;
       }
 
-      const savingDialog = this.$q.dialog({
+      this.savingDialog = this.$q.dialog({
         message: 'Saving idea...',
         progress: true,
         persistent: true,
@@ -80,8 +91,10 @@ export default {
           'title': this.ideaTitle,
           'description': this.ideaDescription
         }
-      }).then(result => {
-        if (!result.data.create_idea) {
+      }).then(async result => {
+        this.savedIdeaId = result.data.create_idea;
+
+        if (!this.savedIdeaId) {
           this.$q.dialog({
             dark: true,
             title: 'Error',
@@ -89,12 +102,26 @@ export default {
           });
         }
 
-        savingDialog.update({'message': 'Uploading files...'});
+        const $fileUploads = this.$refs.uploader;
+        const hasFiles = $fileUploads.hasFiles();
 
-        this.$emit('ok')
-        this.hide();
+        if (!hasFiles) {
+          this.savingDialog.hide();
+          this.$emit('ok')
+          this.hide();
+        }
+
+        this.$forceUpdate;
+        await this.$nextTick();
+
+        this.savingDialog.update({'message': 'Uploading files...'});
+        $fileUploads.upload();
       });
-
+    },
+    uploadFinished() {
+      this.savingDialog.hide();
+      this.$emit('ok')
+      this.hide();
     },
     closeModal() {
       this.$emit('hide');

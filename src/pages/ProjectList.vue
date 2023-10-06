@@ -16,6 +16,7 @@
         :title="project.title"
         :description="project.description"
         :submitted-by="project.submitted_by_name"
+        :picture-url="project.picture_url"
       />
     </template>
   </q-page>

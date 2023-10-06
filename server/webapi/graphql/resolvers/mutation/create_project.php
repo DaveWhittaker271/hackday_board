@@ -31,7 +31,7 @@ class create_project extends BaseResolver
         $user = Users::loggedIn();
 
         if ($args['id']) {
-            $project = $em->getRepository(Projects::class)->findOneBy(['id' => $args['id'], 'user_id' => $user->id]);
+            $project = $em->getRepository(Projects::class)->findOneBy(['id' => $args['id'], 'submitted_by' => $user->id]);
         } else {
             $project = new Projects();
         }

@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md row items-start q-gutter-md">
     <q-card class="my-card">
-      <img :src="imageUrl">
+      <img v-if="pictureUrl" :src="pictureUrl" class="full-width" style="max-width: 500px">
 
       <q-card-section>
         <div class="text-h6">{{ title }}</div>
@@ -34,7 +34,7 @@ export default {
     title: String,
     submittedBy: String,
     description: String,
-    imageUrl: String,
+    pictureUrl: String,
   },
 }
 </script>

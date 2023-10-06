@@ -7,6 +7,8 @@ type project {
     title: String!
     description: String
     submitted_by_name: String!
+    picture_url: String
+    files: [String!]
 }
 
 extend type Query {

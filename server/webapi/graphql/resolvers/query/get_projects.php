@@ -2,10 +2,12 @@
 
 namespace webapi\graphql\resolvers\query;
 
+use core\entity\File;
 use core\entity\Projects;
 use core\entity\User;
 use core\graphql\BaseResolver;
 use core\util\Database;
+use core\util\FilesHelper;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
@@ -33,6 +35,16 @@ class get_projects extends BaseResolver
             $user = $em->getRepository(User::class)->findOneBy(['id' => $project->submitted_by]);
 
             $project->submitted_by_name = $user->name;
+
+            $files = $em->getRepository(File::class)->findBy(['project_id' => $project->id]);
+
+            if (!empty($files)) {
+                $firstFile = current($files);
+                $project->picture_url = FilesHelper::getUrlFromFile($firstFile);
+                $project->files = array_map(function ($file) {
+                    return FilesHelper::getUrlFromFile($file);
+                }, $files);
+            }
         }
 
         return (object) ['projects' => $projects];

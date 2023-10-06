@@ -9,6 +9,8 @@ query (
             title
             description
             submitted_by_name
+            picture_url
+            files
         }
     }
 }
